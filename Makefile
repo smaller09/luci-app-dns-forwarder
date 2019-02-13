@@ -43,19 +43,13 @@ define Package/openwrt-dist-luci/Default
 	DEPENDS:=$(2)
 endef
 
-Package/luci-app-chinadns = $(call Package/openwrt-dist-luci/Default,ChinaDNS,+ChinaDNS)
 Package/luci-app-dns-forwarder = $(call Package/openwrt-dist-luci/Default,Dns-Forwarder,+dns-forwarder)
-Package/luci-app-redsocks2 = $(call Package/openwrt-dist-luci/Default,RedSocks2,+redsocks2)
-Package/luci-app-shadowvpn = $(call Package/openwrt-dist-luci/Default,ShadowVPN,+ShadowVPN)
 
 define Package/openwrt-dist-luci/description
 	LuCI Support for $(1).
 endef
 
-Package/luci-app-chinadns/description = $(call Package/openwrt-dist-luci/description,ChinaDNS)
 Package/luci-app-dns-forwarder/description = $(call Package/openwrt-dist-luci/description,Dns-Forwarder)
-Package/luci-app-redsocks2/description = $(call Package/openwrt-dist-luci/description,RedSocks2)
-Package/luci-app-shadowvpn/description = $(call Package/openwrt-dist-luci/description,ShadowVPN)
 
 define Build/Prepare
 	$(foreach po,$(wildcard ${CURDIR}/files/luci/i18n/*.po), \
@@ -78,10 +72,7 @@ fi
 exit 0
 endef
 
-Package/luci-app-chinadns/postinst = $(call Package/openwrt-dist-luci/postinst,chinadns)
 Package/luci-app-dns-forwarder/postinst = $(call Package/openwrt-dist-luci/postinst,dns-forwarder)
-Package/luci-app-redsocks2/postinst = $(call Package/openwrt-dist-luci/postinst,redsocks2)
-Package/luci-app-shadowvpn/postinst = $(call Package/openwrt-dist-luci/postinst,shadowvpn)
 
 define Package/openwrt-dist-luci/postrm
 #!/bin/sh
@@ -89,10 +80,7 @@ rm -f /tmp/luci-indexcache
 exit 0
 endef
 
-Package/luci-app-chinadns/postrm = $(Package/openwrt-dist-luci/postrm)
 Package/luci-app-dns-forwarder/postrm = $(Package/openwrt-dist-luci/postrm)
-Package/luci-app-redsocks2/postrm = $(Package/openwrt-dist-luci/postrm)
-Package/luci-app-shadowvpn/postrm = $(Package/openwrt-dist-luci/postrm)
 
 define Package/openwrt-dist-luci/install
 	$(call Create/uci-defaults,$(2))
@@ -106,12 +94,6 @@ define Package/openwrt-dist-luci/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/luci-$(2) $(1)/etc/uci-defaults/luci-$(2)
 endef
 
-Package/luci-app-chinadns/install = $(call Package/openwrt-dist-luci/install,$(1),chinadns)
 Package/luci-app-dns-forwarder/install = $(call Package/openwrt-dist-luci/install,$(1),dns-forwarder)
-Package/luci-app-redsocks2/install = $(call Package/openwrt-dist-luci/install,$(1),redsocks2)
-Package/luci-app-shadowvpn/install = $(call Package/openwrt-dist-luci/install,$(1),shadowvpn)
 
-$(eval $(call BuildPackage,luci-app-chinadns))
 $(eval $(call BuildPackage,luci-app-dns-forwarder))
-$(eval $(call BuildPackage,luci-app-redsocks2))
-$(eval $(call BuildPackage,luci-app-shadowvpn))
