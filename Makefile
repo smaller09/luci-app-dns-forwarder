@@ -34,22 +34,19 @@ define Create/uci-defaults
 	) > $(PKG_BUILD_DIR)/luci-$(1)
 endef
 
-define Package/luci-app-dns-forwarder/Default
+define Package/luci-app-dns-forwarder
 	SECTION:=luci
 	CATEGORY:=LuCI
 	SUBMENU:=3. Applications
-	TITLE:=$(1) LuCI interface
+	TITLE:=DNS-FORWARDER LuCI interface
 	PKGARCH:=all
-	DEPENDS:=$(2)
+	DEPENDS:=dns-forwarder
 endef
-
-Package/luci-app-dns-forwarder = $(call Package/luci-app-dns-forwarder/Default,Dns-Forwarder,+dns-forwarder)
 
 define Package/luci-app-dns-forwarder/description
-	LuCI Support for $(1).
+	LUCI Support for DNS-FORWARDER	
 endef
 
-Package/luci-app-dns-forwarder/description = $(call Package/luci-app-dns-forwarder/description,Dns-Forwarder)
 
 define Build/Prepare
 	$(foreach po,$(wildcard ${CURDIR}/files/luci/i18n/*.po), \
@@ -65,14 +62,13 @@ endef
 define Package/luci-app-dns-forwarder/postinst
 #!/bin/sh
 if [ -z "$${IPKG_INSTROOT}" ]; then
-	( . /etc/uci-defaults/luci-$(1) ) && rm -f /etc/uci-defaults/luci-$(1)
-	chmod 755 /etc/init.d/$(1) >/dev/null 2>&1
-	/etc/init.d/$(1) enable >/dev/null 2>&1
+	( . /etc/uci-defaults/luci-dns-forwarder ) && rm -f /etc/uci-defaults/luci-dns-forwarder
+	chmod 755 /etc/init.d/dns-forwarder >/dev/null 2>&1
+	/etc/init.d/dns-forwarder enable >/dev/null 2>&1
 fi
 exit 0
 endef
 
-Package/luci-app-dns-forwarder/postinst = $(call Package/luci-app-dns-forwarder/postinst,dns-forwarder)
 
 define Package/luci-app-dns-forwarder/postrm
 #!/bin/sh
@@ -80,20 +76,16 @@ rm -f /tmp/luci-indexcache
 exit 0
 endef
 
-Package/luci-app-dns-forwarder/postrm = $(Package/luci-app-dns-forwarder/postrm)
-
-define Package/openwrt-dist-luci/install
-	$(call Create/uci-defaults,$(2))
+define Package/luci-app-dns-forwarder/install
+	$(call Create/uci-defaults,dns-forwarder)
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/controller
-	$(INSTALL_DATA) ./files/luci/controller/$(2).lua $(1)/usr/lib/lua/luci/controller/$(2).lua
+	$(INSTALL_DATA) ./files/luci/controller/dns-forwarder.lua $(1)/usr/lib/lua/luci/controller/dns-forwarder.lua
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/i18n
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/$(2).*.lmo $(1)/usr/lib/lua/luci/i18n/
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/dns-forwarder.*.lmo $(1)/usr/lib/lua/luci/i18n/
 	$(INSTALL_DIR) $(1)/usr/lib/lua/luci/model/cbi
-	$(INSTALL_DATA) ./files/luci/model/cbi/$(2).lua $(1)/usr/lib/lua/luci/model/cbi/
+	$(INSTALL_DATA) ./files/luci/model/cbi/dns-forwarder.lua $(1)/usr/lib/lua/luci/model/cbi/
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/luci-$(2) $(1)/etc/uci-defaults/luci-$(2)
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/luci-dns-forwarder $(1)/etc/uci-defaults/luci-dns-forwarder
 endef
-
-Package/luci-app-dns-forwarder/install = $(call Package/luci-app-dns-forwarder/install,$(1),dns-forwarder)
 
 $(eval $(call BuildPackage,luci-app-dns-forwarder))
